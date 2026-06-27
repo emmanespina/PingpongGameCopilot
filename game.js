@@ -242,6 +242,22 @@ function updateStatus() {
     }
 }
 
+function checkWinCondition() {
+    // Check if anyone reached winning score
+    if (score.player >= CONFIG.WINNING_SCORE) {
+        gameState.gameActive = false;
+        gameState.gamePaused = false;
+        document.getElementById('status').textContent = '🎉 PLAYER WINS! Press SPACE to play again';
+        return true;
+    } else if (score.computer >= CONFIG.WINNING_SCORE) {
+        gameState.gameActive = false;
+        gameState.gamePaused = false;
+        document.getElementById('status').textContent = '🤖 COMPUTER WINS! Press SPACE to play again';
+        return true;
+    }
+    return false;
+}
+
 function updateScore() {
     const playerScoreEl = document.getElementById('playerScore');
     const computerScoreEl = document.getElementById('computerScore');
@@ -255,15 +271,8 @@ function updateScore() {
     playerScoreEl.classList.add('update');
     computerScoreEl.classList.add('update');
 
-    if (score.player === CONFIG.WINNING_SCORE) {
-        gameState.gameActive = false;
-        gameState.gamePaused = false;
-        document.getElementById('status').textContent = '🎉 PLAYER WINS! Press SPACE to play again';
-    } else if (score.computer === CONFIG.WINNING_SCORE) {
-        gameState.gameActive = false;
-        gameState.gamePaused = false;
-        document.getElementById('status').textContent = '🤖 COMPUTER WINS! Press SPACE to play again';
-    }
+    // Check win condition immediately
+    checkWinCondition();
 }
 
 function updateStats() {
@@ -358,7 +367,10 @@ function updateBall() {
             gameState.bestRally = gameState.rally;
         }
         updateScore();
-        resetBall();
+        // Only continue if game is still active (not won)
+        if (gameState.gameActive) {
+            resetBall();
+        }
     }
 
     if (ball.x + ball.radius > gameState.canvas.width) {
@@ -367,7 +379,10 @@ function updateBall() {
             gameState.bestRally = gameState.rally;
         }
         updateScore();
-        resetBall();
+        // Only continue if game is still active (not won)
+        if (gameState.gameActive) {
+            resetBall();
+        }
     }
 }
 
